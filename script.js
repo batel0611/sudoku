@@ -1,40 +1,4 @@
-function generateBoard() {
-  const board = document.getElementById("sudoku-board");
-  board.innerHTML = "";
-  for (let i = 0; i < 81; i++) {
-    const input = document.createElement("input");
-    input.type = "text";
-    input.maxLength = "1";
-    input.dataset.index = i;
-    input.value = Math.random() < 0.2 ? Math.floor(Math.random() * 9 + 1) : "";
-    input.oninput = () => {
-      input.value = input.value.replace(/[^1-9]/g, "");
-    };
-    board.appendChild(input);
-  }
-}
-
-function getBoard() {
-  const inputs = document.querySelectorAll("#sudoku-board input");
-  let board = [];
-  for (let i = 0; i < 9; i++) {
-    board.push([]);
-    for (let j = 0; j < 9; j++) {
-      const val = inputs[i * 9 + j].value;
-      board[i].push(val === "" ? 0 : parseInt(val));
-    }
-  }
-  return board;
-}
-
-function setBoard(board) {
-  const inputs = document.querySelectorAll("#sudoku-board input");
-  for (let i = 0; i < 9; i++) {
-    for (let j = 0; j < 9; j++) {
-      inputs[i * 9 + j].value = board[i][j] === 0 ? "" : board[i][j];
-    }
-  }
-}
+let lives = 3;
 
 function isValid(board, row, col, num) {
   for (let i = 0; i < 9; i++) {
@@ -46,14 +10,15 @@ function isValid(board, row, col, num) {
   return true;
 }
 
-function solveSudoku(board) {
+function solve(board) {
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {
       if (board[row][col] === 0) {
-        for (let num = 1; num <= 9; num++) {
+        const nums = [...Array(9).keys()].map(i => i + 1).sort(() => Math.random() - 0.5);
+        for (let num of nums) {
           if (isValid(board, row, col, num)) {
             board[row][col] = num;
-            if (solveSudoku(board)) return true;
+            if (solve(board)) return true;
             board[row][col] = 0;
           }
         }
@@ -64,14 +29,93 @@ function solveSudoku(board) {
   return true;
 }
 
-function solveBoard() {
-  const board = getBoard();
-  if (solveSudoku(board)) {
-    setBoard(board);
-    alert("Solved!");
-  } else {
-    alert("No solution found.");
+function getCluesFromDifficulty() {
+  const level = document.getElementById("difficulty").value;
+  if (level === "easy") return 45;
+  if (level === "hard") return 25;
+  return 30;
+}
+
+function generatePuzzle(clues = 30) {
+  const board = Array.from({ length: 9 }, () => Array(9).fill(0));
+  solve(board);
+  const solution = board.map(row => [...row]); // שמור את הפתרון האמיתי
+
+  const positions = [];
+  for (let i = 0; i < 81; i++) positions.push(i);
+  positions.sort(() => Math.random() - 0.5);
+
+  const removed = 81 - clues;
+  for (let i = 0; i < removed; i++) {
+    const row = Math.floor(positions[i] / 9);
+    const col = positions[i] % 9;
+    board[row][col] = 0;
   }
+
+  return { puzzle: board, solution };
+}
+
+function generateBoard() {
+  const boardElement = document.getElementById("sudoku-board");
+  boardElement.innerHTML = "";
+  lives = 3;
+  updateHearts();
+
+  const clues = getCluesFromDifficulty();
+  const { puzzle, solution } = generatePuzzle(clues);
+
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.maxLength = "1";
+      input.dataset.row = i;
+      input.dataset.col = j;
+
+      if (puzzle[i][j] !== 0) {
+        input.value = puzzle[i][j];
+        input.disabled = true;
+        input.style.backgroundColor = "#e0e0e0";
+      } else {
+        input.value = "";
+        input.oninput = () => {
+          if (lives <= 0) {
+            input.value = "";
+            return;
+          }
+          const val = input.value.replace(/[^1-9]/g, "");
+          input.value = val;
+
+          if (val) {
+            const correct = solution[i][j];
+            if (parseInt(val) !== correct) {
+              lives--;
+              updateHearts();
+              input.value = "";
+              alert("לא נכון! ירד לך לב ❤️");
+              if (lives === 0) {
+                alert("המשחק נגמר 😭");
+                disableBoard();
+              }
+            }
+          }
+        };
+      }
+
+      boardElement.appendChild(input);
+    }
+  }
+}
+
+function updateHearts() {
+  const heartDisplay = document.getElementById("hearts");
+  heartDisplay.innerText = "❤️".repeat(lives) + "💔".repeat(3 - lives);
+}
+
+function disableBoard() {
+  document.querySelectorAll("#sudoku-board input").forEach(input => {
+    if (!input.disabled) input.disabled = true;
+  });
 }
 
 generateBoard();
