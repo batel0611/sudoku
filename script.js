@@ -129,3 +129,15 @@ function disableBoard() {
 }
 
 generateBoard();
+function checkWin() {
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      const input = document.querySelector(`input[data-row='${row}'][data-col='${col}']`);
+      const val = parseInt(input.value);
+      if (!val || val !== solution[row][col]) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
