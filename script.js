@@ -109,11 +109,13 @@ function generateBoard() {
                 alert("המשחק נגמר 😭");
                 disableBoard();
               }
-            } else {
-              if (checkWin()) {
-                document.getElementById("win-message").style.display = "block";
-                document.getElementById("win-sound").play();
-              }
+            }
+
+            // נבדוק ניצחון גם אם הוא כתב נכון וגם אם לא
+            if (checkWin()) {
+              document.getElementById("win-message").style.display = "block";
+              document.getElementById("win-sound").play();
+              disableBoard();
             }
           }
         };
