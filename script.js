@@ -1,4 +1,5 @@
 let lives = 3;
+let currentBoard = []; // מצב הלוח כרגע
 
 function isValid(board, row, col, num) {
   for (let i = 0; i < 9; i++) {
@@ -39,7 +40,7 @@ function getCluesFromDifficulty() {
 function generatePuzzle(clues = 30) {
   const board = Array.from({ length: 9 }, () => Array(9).fill(0));
   solve(board);
-  const solution = board.map(row => [...row]); // שמור את הפתרון האמיתי
+  const solution = board.map(row => [...row]);
 
   const positions = [];
   for (let i = 0; i < 81; i++) positions.push(i);
@@ -64,6 +65,8 @@ function generateBoard() {
   const clues = getCluesFromDifficulty();
   const { puzzle, solution } = generatePuzzle(clues);
 
+  currentBoard = puzzle.map(row => [...row]); // עדכון הלוח הפעיל
+
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
       const input = document.createElement("input");
@@ -83,16 +86,23 @@ function generateBoard() {
             input.value = "";
             return;
           }
+
           const val = input.value.replace(/[^1-9]/g, "");
           input.value = val;
 
           if (val) {
+            const userNum = parseInt(val);
             const correct = solution[i][j];
-            if (parseInt(val) !== correct) {
+
+            currentBoard[i][j] = userNum; // שמירת הקלט בלוח הפעיל
+
+            if (userNum !== correct) {
               lives--;
               updateHearts();
               input.value = "";
+              currentBoard[i][j] = 0; // מחיקת השגיאה
               alert("לא נכון! ירד לך לב ❤️");
+
               if (lives === 0) {
                 alert("המשחק נגמר 😭");
                 disableBoard();
