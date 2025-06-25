@@ -8,11 +8,17 @@
 </head>
 <body>
   <h1>Sudoku</h1>
+  <div id="hearts">❤️❤️❤️</div>
   <div id="sudoku-board"></div>
   <div class="buttons">
-    <button onclick="generateBoard()">New Game</button>
-    <button onclick="solveBoard()">Solve</button>
-  </div>
+  <label for="difficulty">Difficulty:</label>
+  <select id="difficulty">
+    <option value="easy">Easy</option>
+    <option value="medium" selected>Medium</option>
+    <option value="hard">Hard</option>
+  </select>
+  <button onclick="generateBoard()">New Game</button>
+</div>
   <script src="script.js"></script>
 </body>
 </html>
