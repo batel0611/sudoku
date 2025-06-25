@@ -16,6 +16,14 @@ h1 {
   margin-bottom: 15px;
 }
 
+#win-message {
+  display: none;
+  font-size: 24px;
+  color: green;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
 #sudoku-board {
   display: grid;
   grid-template-columns: repeat(9, 45px);
@@ -44,6 +52,34 @@ input[disabled] {
   background-color: #e0e0e0;
   color: #000;
   font-weight: bold;
+}
+
+.highlighted {
+  background-color: #c2eaff !important;
+}
+
+#number-bar {
+  margin: 10px auto;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 400px;
+}
+
+.number-button {
+  width: 40px;
+  height: 40px;
+  margin: 5px;
+  font-size: 20px;
+  border: 1px solid #999;
+  border-radius: 8px;
+  background-color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.number-button:hover {
+  background-color: #ddd;
 }
 
 .buttons {
@@ -82,5 +118,15 @@ select:hover, button:hover {
 
   #hearts {
     font-size: 22px;
+  }
+
+  #number-bar {
+    max-width: 300px;
+  }
+
+  .number-button {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
   }
 }
