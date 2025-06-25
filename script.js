@@ -1,5 +1,6 @@
 let lives = 3;
-let currentBoard = []; // מצב הלוח כרגע
+let currentBoard = [];
+let solution = [];
 
 function isValid(board, row, col, num) {
   for (let i = 0; i < 9; i++) {
@@ -40,8 +41,9 @@ function getCluesFromDifficulty() {
 function generatePuzzle(clues = 30) {
   const board = Array.from({ length: 9 }, () => Array(9).fill(0));
   solve(board);
-  const solution = board.map(row => [...row]);
+  solution = board.map(row => [...row]);
 
+  const puzzle = solution.map(row => [...row]);
   const positions = [];
   for (let i = 0; i < 81; i++) positions.push(i);
   positions.sort(() => Math.random() - 0.5);
@@ -50,10 +52,10 @@ function generatePuzzle(clues = 30) {
   for (let i = 0; i < removed; i++) {
     const row = Math.floor(positions[i] / 9);
     const col = positions[i] % 9;
-    board[row][col] = 0;
+    puzzle[row][col] = 0;
   }
 
-  return { puzzle: board, solution };
+  return puzzle;
 }
 
 function generateBoard() {
@@ -61,11 +63,11 @@ function generateBoard() {
   boardElement.innerHTML = "";
   lives = 3;
   updateHearts();
+  document.getElementById("win-message").style.display = "none";
 
   const clues = getCluesFromDifficulty();
-  const { puzzle, solution } = generatePuzzle(clues);
-
-  currentBoard = puzzle.map(row => [...row]); // עדכון הלוח הפעיל
+  const puzzle = generatePuzzle(clues);
+  currentBoard = puzzle.map(row => [...row]);
 
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
@@ -94,18 +96,23 @@ function generateBoard() {
             const userNum = parseInt(val);
             const correct = solution[i][j];
 
-            currentBoard[i][j] = userNum; // שמירת הקלט בלוח הפעיל
+            currentBoard[i][j] = userNum;
 
             if (userNum !== correct) {
               lives--;
               updateHearts();
               input.value = "";
-              currentBoard[i][j] = 0; // מחיקת השגיאה
+              currentBoard[i][j] = 0;
               alert("לא נכון! ירד לך לב ❤️");
 
               if (lives === 0) {
                 alert("המשחק נגמר 😭");
                 disableBoard();
+              }
+            } else {
+              if (checkWin()) {
+                document.getElementById("win-message").style.display = "block";
+                document.getElementById("win-sound").play();
               }
             }
           }
@@ -128,7 +135,6 @@ function disableBoard() {
   });
 }
 
-generateBoard();
 function checkWin() {
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {
@@ -141,3 +147,5 @@ function checkWin() {
   }
   return true;
 }
+
+generateBoard();
