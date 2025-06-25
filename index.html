@@ -9,23 +9,18 @@
 <body>
   <h1>Sudoku</h1>
   <div id="hearts">❤️❤️❤️</div>
-  <div id="win-message" style="display: none; font-size: 20px; margin: 10px; color: green;">
-  🎉 כל הכבוד! פתרת את הסודוקו בהצלחה!
-</div>
-  <div id="win-message" style="display: none; font-size: 20px; margin: 10px; color: green;">
-  🎉 כל הכבוד! פתרת את הסודוקו בהצלחה!
-</div>
-<audio id="win-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_4708a304fc.mp3"></audio>
+  <div id="win-message" style="display: none; font-size: 24px; color: green; margin: 15px;">🎉 ניצחת! כל הכבוד! 🎉</div>
+  <audio id="win-sound" src="https://www.myinstants.com/media/sounds/level-up.mp3"></audio>
   <div id="sudoku-board"></div>
   <div class="buttons">
-  <label for="difficulty">Difficulty:</label>
-  <select id="difficulty">
-    <option value="easy">Easy</option>
-    <option value="medium" selected>Medium</option>
-    <option value="hard">Hard</option>
-  </select>
-  <button onclick="generateBoard()">New Game</button>
-</div>
+    <label for="difficulty">Difficulty:</label>
+    <select id="difficulty">
+      <option value="easy">Easy</option>
+      <option value="medium" selected>Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+    <button onclick="generateBoard()">New Game</button>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
