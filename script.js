@@ -1,3 +1,5 @@
+// קובץ script.js המלא עם לבבות, קונפטי, הודעת ניצחון ופס מספרים
+
 let lives = 3;
 let currentBoard = [];
 let solution = [];
@@ -44,23 +46,21 @@ function generatePuzzle(clues = 30) {
   solution = board.map(row => [...row]);
 
   const puzzle = solution.map(row => [...row]);
-  const positions = [];
-  for (let i = 0; i < 81; i++) positions.push(i);
-  positions.sort(() => Math.random() - 0.5);
-
+  const positions = Array.from({ length: 81 }, (_, i) => i).sort(() => Math.random() - 0.5);
   const removed = 81 - clues;
   for (let i = 0; i < removed; i++) {
     const row = Math.floor(positions[i] / 9);
     const col = positions[i] % 9;
     puzzle[row][col] = 0;
   }
-
   return puzzle;
 }
 
 function generateBoard() {
   const boardElement = document.getElementById("sudoku-board");
+  const numbersBar = document.getElementById("numbers-bar");
   boardElement.innerHTML = "";
+  numbersBar.innerHTML = "";
   lives = 3;
   updateHearts();
   document.getElementById("win-message").style.display = "none";
@@ -80,48 +80,54 @@ function generateBoard() {
       if (puzzle[i][j] !== 0) {
         input.value = puzzle[i][j];
         input.disabled = true;
-        input.style.backgroundColor = "#e0e0e0";
+        input.classList.add("fixed");
       } else {
         input.value = "";
-        input.oninput = () => {
-          if (lives <= 0) {
-            input.value = "";
-            return;
-          }
-
-          const val = input.value.replace(/[^1-9]/g, "");
-          input.value = val;
-
-          if (val) {
-            const userNum = parseInt(val);
-            const correct = solution[i][j];
-
-            currentBoard[i][j] = userNum;
-
-            if (userNum !== correct) {
-              lives--;
-              updateHearts();
-              input.value = "";
-              currentBoard[i][j] = 0;
-              alert("לא נכון! ירד לך לב ❤️");
-
-              if (lives === 0) {
-                alert("המשחק נגמר 😭");
-                disableBoard();
-              }
-            }
-
-            if (checkWin()) {
-              document.getElementById("win-message").style.display = "block";
-              document.getElementById("win-sound").play();
-              confetti();
-              disableBoard();
-            }
-          }
-        };
+        input.oninput = () => handleInput(input, i, j);
       }
-
       boardElement.appendChild(input);
+    }
+  }
+
+  // יצירת שורת מספרים
+  for (let num = 1; num <= 9; num++) {
+    const btn = document.createElement("button");
+    btn.textContent = num;
+    btn.dataset.number = num;
+    btn.onclick = () => highlightNumber(num);
+    numbersBar.appendChild(btn);
+  }
+}
+
+function handleInput(input, i, j) {
+  if (lives <= 0) return;
+  const val = input.value.replace(/[^1-9]/g, "");
+  input.value = val;
+
+  if (val) {
+    const userNum = parseInt(val);
+    const correct = solution[i][j];
+    currentBoard[i][j] = userNum;
+
+    if (userNum !== correct) {
+      lives--;
+      updateHearts();
+      input.value = "";
+      currentBoard[i][j] = 0;
+      alert("לא נכון! ירד לך לב ❤️");
+      if (lives === 0) {
+        alert("המשחק נגמר 😭");
+        disableBoard();
+      }
+    } else {
+      updateNumbersBar();
+    }
+
+    if (checkWin()) {
+      document.getElementById("win-message").style.display = "block";
+      document.getElementById("win-sound").play();
+      confetti();
+      disableBoard();
     }
   }
 }
@@ -142,12 +148,34 @@ function checkWin() {
     for (let col = 0; col < 9; col++) {
       const input = document.querySelector(`input[data-row='${row}'][data-col='${col}']`);
       const val = parseInt(input.value);
-      if (!val || val !== solution[row][col]) {
-        return false;
-      }
+      if (!val || val !== solution[row][col]) return false;
     }
   }
   return true;
 }
 
-generateBoard();
+function highlightNumber(num) {
+  document.querySelectorAll("#sudoku-board input").forEach(input => {
+    if (input.value == num) {
+      input.style.backgroundColor = "#ffeb3b";
+    } else if (!input.disabled) {
+      input.style.backgroundColor = "white";
+    } else {
+      input.style.backgroundColor = "#e0e0e0";
+    }
+  });
+}
+
+function updateNumbersBar() {
+  for (let n = 1; n <= 9; n++) {
+    const count = [...document.querySelectorAll("#sudoku-board input")].filter(
+      el => parseInt(el.value) === n
+    ).length;
+    if (count === 9) {
+      const btn = document.querySelector(`#numbers-bar button[data-number='${n}']`);
+      if (btn) btn.remove();
+    }
+  }
+}
+
+document.addEventListener("DOMContentLoaded", generateBoard);
