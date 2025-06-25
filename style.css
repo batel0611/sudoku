@@ -30,6 +30,7 @@ h1 {
   gap: 0;
   margin: 20px auto;
   width: fit-content;
+  border: 3px solid black; /* מסגרת חיצונית */
 }
 
 input {
@@ -39,31 +40,36 @@ input {
   font-size: 20px;
   border: 1px solid #ccc;
   background-color: white;
-  border-radius: 6px;
   transition: 0.2s;
+  border-radius: 0; /* בלי עיגול בפינות, שיהיה ריבוע חד */
 }
 
-/* גבולות עבים בין ריבועי 3x3 */
-#sudoku-board input {
-  border: 1px solid #ccc;
+/* קווים עבים בין תאי 3x3 */
+input[data-row="3"],
+input[data-row="6"] {
+  border-top: 3px solid #000;
 }
 
-#sudoku-board input:nth-child(9n + 1) {
-  border-left: 3px solid #666;
+input[data-col="3"],
+input[data-col="6"] {
+  border-left: 3px solid #000;
 }
 
-#sudoku-board input:nth-child(9n) {
-  border-right: 3px solid #666;
+/* מסגרת עליונה */
+input[data-row="0"] {
+  border-top: 3px solid #000;
 }
-
-#sudoku-board input:nth-child(n + 1):nth-child(-n + 9),
-#sudoku-board input:nth-child(n + 28):nth-child(-n + 36),
-#sudoku-board input:nth-child(n + 55):nth-child(-n + 63) {
-  border-top: 3px solid #666;
+/* מסגרת שמאלית */
+input[data-col="0"] {
+  border-left: 3px solid #000;
 }
-
-#sudoku-board input:nth-child(n + 73) {
-  border-bottom: 3px solid #666;
+/* מסגרת תחתונה */
+input[data-row="8"] {
+  border-bottom: 3px solid #000;
+}
+/* מסגרת ימנית */
+input[data-col="8"] {
+  border-right: 3px solid #000;
 }
 
 input:focus {
@@ -81,7 +87,8 @@ input[disabled] {
   background-color: #c2eaff !important;
 }
 
-#number-bar {
+#number-bar,
+#numbers-bar {
   margin: 10px auto;
   display: flex;
   justify-content: center;
@@ -89,7 +96,8 @@ input[disabled] {
   max-width: 400px;
 }
 
-.number-button {
+.number-button,
+#numbers-bar button {
   width: 40px;
   height: 40px;
   margin: 5px;
@@ -101,7 +109,8 @@ input[disabled] {
   transition: 0.2s;
 }
 
-.number-button:hover {
+.number-button:hover,
+#numbers-bar button:hover {
   background-color: #ddd;
 }
 
@@ -143,11 +152,12 @@ select:hover, button:hover {
     font-size: 22px;
   }
 
-  #number-bar {
+  #number-bar, #numbers-bar {
     max-width: 300px;
   }
 
-  .number-button {
+  .number-button,
+  #numbers-bar button {
     width: 32px;
     height: 32px;
     font-size: 16px;
