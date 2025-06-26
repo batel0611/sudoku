@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sudoku Game</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sudoku Multiplayer</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="start-screen">
     <h1>🎮 Start Your Sudoku Game</h1>
     <div class="selectors">
+      <label for="player-name">Player Name:</label>
+      <input id="player-name" type="text" placeholder="Your name..." required>
+
       <label for="start-difficulty">Difficulty:</label>
       <select id="start-difficulty">
         <option value="easy">Easy</option>
@@ -28,6 +31,7 @@
 
   <div id="game-screen" style="display: none;">
     <h1>Sudoku <span id="menu-toggle">&#8942;</span></h1>
+
     <div id="theme-menu" class="hidden">
       <label for="theme-select">🎨 Theme:</label>
       <select id="theme-select">
@@ -38,10 +42,12 @@
       </select>
     </div>
 
-    <div id="hearts">❤️❤️❤️</div>
-    <div id="timer">00:00:00</div>
-    <div id="sudoku-board"></div>
-    <div id="numbers-bar"></div>
+    <div id="game-center">
+      <div id="hearts">❤️❤️❤️</div>
+      <div id="timer">00:00:00</div>
+      <div id="sudoku-board"></div>
+      <div id="numbers-bar"></div>
+    </div>
 
     <div class="buttons">
       <label for="difficulty">Difficulty:</label>
@@ -63,31 +69,10 @@
     <div id="win-message" style="display: none; font-size: 24px; color: green; margin-top: 20px;">
       ✨ כל הכבוד! פתרת את הסודוקו בהצלחה! ✨
     </div>
+    <ul id="highscore-list"></ul>
     <audio id="win-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_91ad52984b.mp3?filename=success-1-6297.mp3"></audio>
   </div>
 
-  <script>
-    document.getElementById("start-button").onclick = () => {
-      const difficulty = document.getElementById("start-difficulty").value;
-      const mode = document.getElementById("start-mode").value;
-
-      document.getElementById("difficulty").value = difficulty;
-      document.getElementById("mode").value = mode;
-
-      document.getElementById("start-screen").style.display = "none";
-      document.getElementById("game-screen").style.display = "block";
-      generateBoard();
-    };
-
-    document.getElementById("menu-toggle").onclick = () => {
-      const menu = document.getElementById("theme-menu");
-      menu.classList.toggle("hidden");
-    };
-
-    document.getElementById("theme-select").onchange = (e) => {
-      document.body.className = "theme-" + e.target.value;
-    };
-  </script>
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
