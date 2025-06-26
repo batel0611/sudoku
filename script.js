@@ -3,6 +3,8 @@ let currentBoard = [];
 let solution = [];
 let startTime;
 let timerInterval;
+let username = "";
+let theme = "default";
 
 function isRelaxedMode() {
   return document.getElementById("mode").value === "no-lives";
@@ -95,18 +97,27 @@ function generateBoard() {
   }
 
   for (let num = 1; num <= 9; num++) {
-    const btn = document.createElement("button");
-    btn.textContent = num;
-    btn.dataset.number = num;
-    btn.onclick = () => highlightNumber(num);
-    numbersBar.appendChild(btn);
-  }
+  const btn = document.createElement("button");
+  btn.textContent = num;
+  btn.dataset.number = num;
+  btn.onclick = () => {
+    highlightNumber(num);
+    btn.classList.add("bounce");
+    setTimeout(() => btn.classList.remove("bounce"), 300);
+  };
+  numbersBar.appendChild(btn);
+}
+
 }
 
 function handleInput(input, i, j) {
   if (!isRelaxedMode() && lives <= 0) return;
   const val = input.value.replace(/[^1-9]/g, "");
   input.value = val;
+  
+  input.classList.add("flash");
+  setTimeout(() => input.classList.remove("flash"), 300);
+
 
   if (val) {
     const userNum = parseInt(val);
@@ -132,9 +143,10 @@ function handleInput(input, i, j) {
 
     if (checkWin()) {
       stopTimer();
+      const duration = document.getElementById("timer").textContent;
+      saveScore(username, duration);
       document.getElementById("win-message").style.display = "block";
       document.getElementById("win-sound").play();
-      confetti();
       disableBoard();
     } else if (isRelaxedMode() && isBoardFull()) {
       alert("יש טעויות בלוח 😥");
@@ -212,13 +224,23 @@ function stopTimer() {
   clearInterval(timerInterval);
 }
 
-// טוען את המשחק רק לאחר בחירת ההגדרות
+function saveScore(user, time) {
+  if (!user) return;
+  let scores = JSON.parse(localStorage.getItem("sudoku-scores")) || [];
+  scores.push({ user, time, date: new Date().toISOString() });
+  localStorage.setItem("sudoku-scores", JSON.stringify(scores));
+}
+
+// ✅ קוד הפעלה ראשוני של המשחק והתפריט
 document.addEventListener("DOMContentLoaded", () => {
-  if (document.getElementById("start-button")) {
-    document.getElementById("start-button").onclick = () => {
+  const startBtn = document.getElementById("start-button");
+  if (startBtn) {
+    startBtn.onclick = () => {
+      const nameInput = document.getElementById("player-name");
+      username = nameInput && nameInput.value.trim() !== "" ? nameInput.value.trim() : "שחקן";
+
       const difficulty = document.getElementById("start-difficulty").value;
       const mode = document.getElementById("start-mode").value;
-
       document.getElementById("difficulty").value = difficulty;
       document.getElementById("mode").value = mode;
 
@@ -227,4 +249,36 @@ document.addEventListener("DOMContentLoaded", () => {
       generateBoard();
     };
   }
+
+  // תפריט ⋮ שינוי עיצוב
+  const menuToggle = document.getElementById("menu-toggle");
+  const themeMenu = document.getElementById("theme-menu");
+  if (menuToggle && themeMenu) {
+    menuToggle.onclick = () => {
+      themeMenu.classList.toggle("hidden");
+    };
+  }
+
+  const themeSelect = document.getElementById("theme-select");
+  if (themeSelect) {
+    themeSelect.onchange = (e) => {
+      document.body.className = "theme-" + e.target.value;
+    };
+  }
+
+  loadHighScores();
 });
+
+function loadHighScores() {
+  fetch("/api/highscores")
+    .then(res => res.json())
+    .then(data => {
+      const list = document.getElementById("highscore-list");
+      list.innerHTML = "";
+      data.forEach(score => {
+        const li = document.createElement("li");
+        li.textContent = `🏅 ${score.name} - ${score.time}`;
+        list.appendChild(li);
+      });
+    });
+}
