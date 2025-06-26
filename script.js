@@ -1,8 +1,9 @@
-// קובץ script.js המלא עם לבבות, קונפטי, הודעת ניצחון ופס מספרים
-
+// script.js
 let lives = 3;
 let currentBoard = [];
 let solution = [];
+let startTime;
+let timerInterval;
 
 function isValid(board, row, col, num) {
   for (let i = 0; i < 9; i++) {
@@ -44,7 +45,6 @@ function generatePuzzle(clues = 30) {
   const board = Array.from({ length: 9 }, () => Array(9).fill(0));
   solve(board);
   solution = board.map(row => [...row]);
-
   const puzzle = solution.map(row => [...row]);
   const positions = Array.from({ length: 81 }, (_, i) => i).sort(() => Math.random() - 0.5);
   const removed = 81 - clues;
@@ -64,6 +64,7 @@ function generateBoard() {
   lives = 3;
   updateHearts();
   document.getElementById("win-message").style.display = "none";
+  startTimer();
 
   const clues = getCluesFromDifficulty();
   const puzzle = generatePuzzle(clues);
@@ -89,7 +90,6 @@ function generateBoard() {
     }
   }
 
-  // יצירת שורת מספרים
   for (let num = 1; num <= 9; num++) {
     const btn = document.createElement("button");
     btn.textContent = num;
@@ -118,12 +118,16 @@ function handleInput(input, i, j) {
       if (lives === 0) {
         alert("המשחק נגמר 😭");
         disableBoard();
+        stopTimer();
       }
     } else {
       updateNumbersBar();
     }
 
     if (checkWin()) {
+      stopTimer();
+      const duration = document.getElementById("timer").textContent;
+      saveHighscore(duration);
       document.getElementById("win-message").style.display = "block";
       document.getElementById("win-sound").play();
       confetti();
@@ -176,6 +180,34 @@ function updateNumbersBar() {
       if (btn) btn.remove();
     }
   }
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  startTime = Date.now();
+  timerInterval = setInterval(() => {
+    const now = Date.now();
+    const diff = now - startTime;
+    const totalSeconds = Math.floor(diff / 1000);
+
+    const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, "0");
+    const mins = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, "0");
+    const secs = (totalSeconds % 60).toString().padStart(2, "0");
+
+    document.getElementById("timer").textContent = `${hours}:${mins}:${secs}`;
+  }, 1000);
+}
+
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+function saveHighscore(timeStr) {
+  const list = document.getElementById("highscore-list");
+  const li = document.createElement("li");
+  li.textContent = `⏱️ ${timeStr}`;
+  list.appendChild(li);
 }
 
 document.addEventListener("DOMContentLoaded", generateBoard);
