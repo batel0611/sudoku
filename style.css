@@ -1,11 +1,9 @@
 body {
   font-family: 'Segoe UI', sans-serif;
   background: linear-gradient(to bottom right, #eaf3ff, #f9f9fb);
-  text-align: center;
   padding: 20px;
   margin: 0;
   color: #333;
-  transition: background 0.4s, color 0.4s;
 }
 
 h1 {
@@ -14,50 +12,122 @@ h1 {
   font-weight: 800;
   color: #1f1f70;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-
-#menu-toggle {
-  cursor: pointer;
-  font-size: 22px;
-  margin-left: 10px;
-}
-
-#theme-menu {
-  margin-bottom: 10px;
-}
-
-.hidden {
-  display: none;
+  text-align: center;
 }
 
 #start-screen {
-  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 20px;
+  min-height: 100vh;
+  text-align: center;
 }
 
-.selectors {
-  margin-bottom: 20px;
+#start-screen h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+#start-screen .selectors {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+}
+
+#start-screen .selectors label {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#start-screen input[type="text"] {
+  width: 300px;
+  padding: 10px;
+  font-size: 18px;
+  border-radius: 8px;
+  border: 2px solid #1f1f70;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+#start-screen select,
+#start-screen button {
+  font-size: 16px;
+  padding: 10px 16px;
+  border: 2px solid #1f1f70;
+  border-radius: 8px;
+  background-color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#start-screen select:hover,
+#start-screen button:hover {
+  background-color: #e0f0ff;
+}
+
+#game-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 30px;
+  position: relative;
+  min-height: 100vh;
+  justify-content: center;
+}
+
+#top-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* מרכז אופקית */
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  position: relative;
+}
+
+#theme-menu {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  position: absolute;
+  top: 35px;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  z-index: 10;
+}
+
+#theme-menu.active {
+  display: flex;
 }
 
 #hearts {
   font-size: 30px;
-  margin-bottom: 10px;
 }
 
 #timer {
   font-size: 18px;
-  margin-bottom: 10px;
+}
+
+#board-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 #sudoku-board {
   display: grid;
   grid-template-columns: repeat(9, 50px);
   gap: 2px;
-  margin: 20px auto;
-  width: fit-content;
   border: 4px solid #1f1f70;
   padding: 4px;
   background-color: white;
@@ -85,6 +155,10 @@ input[disabled] {
   font-weight: bold;
 }
 
+input[data-bold] {
+  font-weight: bold;
+}
+
 #sudoku-board input:nth-child(3n) {
   border-right: 2px solid #1f1f70;
 }
@@ -94,12 +168,24 @@ input[disabled] {
   border-bottom: 2px solid #1f1f70;
 }
 
+#sudoku-board input:nth-child(1),
+#sudoku-board input:nth-child(2),
+#sudoku-board input:nth-child(3),
+#sudoku-board input:nth-child(10),
+#sudoku-board input:nth-child(11),
+#sudoku-board input:nth-child(12),
+#sudoku-board input:nth-child(19),
+#sudoku-board input:nth-child(20),
+#sudoku-board input:nth-child(21) {
+  border-top: none;
+}
+
 .highlighted {
   background-color: #ffeb3b !important;
 }
 
 #numbers-bar {
-  margin: 20px auto 10px;
+  margin: 20px 0;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -118,12 +204,21 @@ input[disabled] {
   transition: 0.2s;
 }
 
+#game-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
 #numbers-bar button:hover {
   background-color: #ddeeff;
 }
 
 .buttons {
   margin-top: 15px;
+  text-align: center;
 }
 
 select, button {
@@ -146,9 +241,29 @@ select:hover, button:hover {
   font-weight: bold;
   color: #237e00;
   margin-top: 20px;
+  text-align: center;
 }
 
-@media (max-width: 600px) {
+.hidden {
+  display: none !important;
+}
+
+
+#menu-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  font-size: 24px;
+  z-index: 1000;
+}
+
+@media (max-width: 800px) {
+  #game-screen {
+    flex-direction: column;
+    align-items: center;
+  }
+
   #sudoku-board {
     grid-template-columns: repeat(9, 35px);
   }
@@ -164,57 +279,24 @@ select:hover, button:hover {
     height: 35px;
     font-size: 18px;
   }
+  
+@keyframes bounce {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
-/* עיצובי ערכות נושא */
-body.theme-dark {
-  background: #1c1c1c;
-  color: #eee;
+.bounce {
+  animation: bounce 0.3s ease;
+}
+@keyframes flash-bg {
+  0%   { background-color: #d0f0d0; }
+  100% { background-color: white; }
 }
 
-body.theme-dark #sudoku-board {
-  background-color: #2e2e2e;
-  border-color: #888;
+.flash {
+  animation: flash-bg 0.3s ease;
 }
 
-body.theme-dark input {
-  background-color: #444;
-  color: white;
-  border: 1px solid #666;
-}
 
-body.theme-dark input[disabled] {
-  background-color: #333;
-  color: #bbb;
-}
-
-body.theme-glass {
-  background: linear-gradient(135deg, #e0f7fa, #e8eaf6);
-  color: #003b5c;
-}
-
-body.theme-glass #sudoku-board {
-  background-color: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(10px);
-  border-color: #90caf9;
-}
-
-body.theme-glass input {
-  background-color: rgba(255, 255, 255, 0.6);
-  border: 1px solid #90caf9;
-}
-
-body.theme-pastel {
-  background: #fff6f0;
-  color: #5c4b51;
-}
-
-body.theme-pastel #sudoku-board {
-  background-color: #fff;
-  border-color: #f8b195;
-}
-
-body.theme-pastel input {
-  background-color: #fdfdfd;
-  border-color: #f8b195;
 }
