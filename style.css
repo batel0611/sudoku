@@ -5,6 +5,7 @@ body {
   padding: 20px;
   margin: 0;
   color: #333;
+  transition: background 0.4s, color 0.4s;
 }
 
 h1 {
@@ -13,6 +14,32 @@ h1 {
   font-weight: 800;
   color: #1f1f70;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+#menu-toggle {
+  cursor: pointer;
+  font-size: 22px;
+  margin-left: 10px;
+}
+
+#theme-menu {
+  margin-bottom: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+#start-screen {
+  padding-top: 60px;
+}
+
+.selectors {
+  margin-bottom: 20px;
 }
 
 #hearts {
@@ -58,10 +85,6 @@ input[disabled] {
   font-weight: bold;
 }
 
-input[data-bold] {
-  font-weight: bold;
-}
-
 #sudoku-board input:nth-child(3n) {
   border-right: 2px solid #1f1f70;
 }
@@ -69,18 +92,6 @@ input[data-bold] {
 #sudoku-board input:nth-child(n+19):nth-child(-n+27),
 #sudoku-board input:nth-child(n+46):nth-child(-n+54) {
   border-bottom: 2px solid #1f1f70;
-}
-
-#sudoku-board input:nth-child(1),
-#sudoku-board input:nth-child(2),
-#sudoku-board input:nth-child(3),
-#sudoku-board input:nth-child(10),
-#sudoku-board input:nth-child(11),
-#sudoku-board input:nth-child(12),
-#sudoku-board input:nth-child(19),
-#sudoku-board input:nth-child(20),
-#sudoku-board input:nth-child(21) {
-  border-top: none;
 }
 
 .highlighted {
@@ -153,4 +164,57 @@ select:hover, button:hover {
     height: 35px;
     font-size: 18px;
   }
+}
+
+/* עיצובי ערכות נושא */
+body.theme-dark {
+  background: #1c1c1c;
+  color: #eee;
+}
+
+body.theme-dark #sudoku-board {
+  background-color: #2e2e2e;
+  border-color: #888;
+}
+
+body.theme-dark input {
+  background-color: #444;
+  color: white;
+  border: 1px solid #666;
+}
+
+body.theme-dark input[disabled] {
+  background-color: #333;
+  color: #bbb;
+}
+
+body.theme-glass {
+  background: linear-gradient(135deg, #e0f7fa, #e8eaf6);
+  color: #003b5c;
+}
+
+body.theme-glass #sudoku-board {
+  background-color: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  border-color: #90caf9;
+}
+
+body.theme-glass input {
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1px solid #90caf9;
+}
+
+body.theme-pastel {
+  background: #fff6f0;
+  color: #5c4b51;
+}
+
+body.theme-pastel #sudoku-board {
+  background-color: #fff;
+  border-color: #f8b195;
+}
+
+body.theme-pastel input {
+  background-color: #fdfdfd;
+  border-color: #f8b195;
 }
