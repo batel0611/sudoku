@@ -1,9 +1,12 @@
-// script.js
 let lives = 3;
 let currentBoard = [];
 let solution = [];
 let startTime;
 let timerInterval;
+
+function isRelaxedMode() {
+  return document.getElementById("mode").value === "no-lives";
+}
 
 function isValid(board, row, col, num) {
   for (let i = 0; i < 9; i++) {
@@ -61,7 +64,8 @@ function generateBoard() {
   const numbersBar = document.getElementById("numbers-bar");
   boardElement.innerHTML = "";
   numbersBar.innerHTML = "";
-  lives = 3;
+
+  lives = isRelaxedMode() ? Infinity : 3;
   updateHearts();
   document.getElementById("win-message").style.display = "none";
   startTimer();
@@ -100,7 +104,7 @@ function generateBoard() {
 }
 
 function handleInput(input, i, j) {
-  if (lives <= 0) return;
+  if (!isRelaxedMode() && lives <= 0) return;
   const val = input.value.replace(/[^1-9]/g, "");
   input.value = val;
 
@@ -110,15 +114,17 @@ function handleInput(input, i, j) {
     currentBoard[i][j] = userNum;
 
     if (userNum !== correct) {
-      lives--;
-      updateHearts();
-      input.value = "";
-      currentBoard[i][j] = 0;
-      alert("לא נכון! ירד לך לב ❤️");
-      if (lives === 0) {
-        alert("המשחק נגמר 😭");
-        disableBoard();
-        stopTimer();
+      if (!isRelaxedMode()) {
+        lives--;
+        updateHearts();
+        input.value = "";
+        currentBoard[i][j] = 0;
+        alert("לא נכון! ירד לך לב ❤️");
+        if (lives === 0) {
+          alert("המשחק נגמר 😭");
+          disableBoard();
+          stopTimer();
+        }
       }
     } else {
       updateNumbersBar();
@@ -126,19 +132,19 @@ function handleInput(input, i, j) {
 
     if (checkWin()) {
       stopTimer();
-      const duration = document.getElementById("timer").textContent;
-      saveHighscore(duration);
       document.getElementById("win-message").style.display = "block";
       document.getElementById("win-sound").play();
       confetti();
       disableBoard();
+    } else if (isRelaxedMode() && isBoardFull()) {
+      alert("יש טעויות בלוח 😥");
     }
   }
 }
 
 function updateHearts() {
   const heartDisplay = document.getElementById("hearts");
-  heartDisplay.innerText = "❤️".repeat(lives) + "💔".repeat(3 - lives);
+  heartDisplay.innerText = isRelaxedMode() ? "♾️ מצב רגוע" : "❤️".repeat(lives) + "💔".repeat(3 - lives);
 }
 
 function disableBoard() {
@@ -156,6 +162,10 @@ function checkWin() {
     }
   }
   return true;
+}
+
+function isBoardFull() {
+  return [...document.querySelectorAll("#sudoku-board input")].every(input => input.value !== "");
 }
 
 function highlightNumber(num) {
@@ -198,16 +208,23 @@ function startTimer() {
   }, 1000);
 }
 
-
 function stopTimer() {
   clearInterval(timerInterval);
 }
 
-function saveHighscore(timeStr) {
-  const list = document.getElementById("highscore-list");
-  const li = document.createElement("li");
-  li.textContent = `⏱️ ${timeStr}`;
-  list.appendChild(li);
-}
+// טוען את המשחק רק לאחר בחירת ההגדרות
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.getElementById("start-button")) {
+    document.getElementById("start-button").onclick = () => {
+      const difficulty = document.getElementById("start-difficulty").value;
+      const mode = document.getElementById("start-mode").value;
 
-document.addEventListener("DOMContentLoaded", generateBoard);
+      document.getElementById("difficulty").value = difficulty;
+      document.getElementById("mode").value = mode;
+
+      document.getElementById("start-screen").style.display = "none";
+      document.getElementById("game-screen").style.display = "block";
+      generateBoard();
+    };
+  }
+});
